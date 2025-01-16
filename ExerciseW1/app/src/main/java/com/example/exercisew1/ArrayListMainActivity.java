@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class ArrayListMainActivity extends AppCompatActivity {
     private static final String TAG = "ArrayListMainActivity";
     private ArrayList<Integer> numbers;
-
     private EditText inputEditText;
     private Button processButton;
 
@@ -23,13 +22,9 @@ public class ArrayListMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_array_list_main);
-
         // Ánh xạ các view
-        inputEditText = (EditText) findViewById(R.id.arrayInput);
-        processButton = (Button) findViewById(R.id.processButton);
-
+        bindingView();
         numbers = new ArrayList<>();
-
         processButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,14 +34,11 @@ public class ArrayListMainActivity extends AppCompatActivity {
             }
         });
     }
-
     // Hàm xử lý chuỗi input và tìm số nguyên tố
     private void parseInputAndProcessNumbers(String input) {
         numbers.clear(); // Xóa dữ liệu cũ
-
         // Tách chuỗi thành mảng các số
         String[] numberStrings = input.split("\\s+");
-
         // Chuyển đổi từng phần tử thành số và thêm vào ArrayList
         try {
             for (String numStr : numberStrings) {
@@ -59,7 +51,6 @@ public class ArrayListMainActivity extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng nhập các số hợp lệ", Toast.LENGTH_SHORT).show();
         }
     }
-
     // Hàm kiểm tra số nguyên tố
     private boolean isPrime(int number) {
         if (number <= 1) {
@@ -73,7 +64,6 @@ public class ArrayListMainActivity extends AppCompatActivity {
         }
         return true;
     }
-
     // Hàm in ra các số nguyên tố từ ArrayList
     private void printPrimeNumbers(ArrayList<Integer> list) {
         StringBuilder result = new StringBuilder("Các số nguyên tố: ");
@@ -84,5 +74,9 @@ public class ArrayListMainActivity extends AppCompatActivity {
                 result.append(num).append(" ");
             }
         }
+    }
+    private void bindingView() {
+        inputEditText = (EditText) findViewById(R.id.arrayInput);
+        processButton = (Button) findViewById(R.id.processButton);
     }
 }
