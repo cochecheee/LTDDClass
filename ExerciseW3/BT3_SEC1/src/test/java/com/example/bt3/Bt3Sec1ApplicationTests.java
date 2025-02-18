@@ -1,10 +1,10 @@
-package com.example.bt2;
+package com.example.bt3;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Bt2JwtApplicationTests {
+class Bt3Sec1ApplicationTests {
 
 	@Test
 	void contextLoads() {

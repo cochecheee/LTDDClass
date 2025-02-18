@@ -1,13 +1,13 @@
-package com.example.bt2;
+package com.example.bt3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Bt2JwtApplication {
+public class Bt3Sec1Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Bt2JwtApplication.class, args);
+		SpringApplication.run(Bt3Sec1Application.class, args);
 	}
 
 }

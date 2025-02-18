@@ -1,4 +1,4 @@
-package com.example.bt2.model;
+package com.example.bt3.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

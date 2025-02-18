@@ -1,4 +1,4 @@
-package com.example.bt2.controller;
+package com.example.bt3.controller;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.bt2.model.Customer;
+import com.example.bt3.model.Customer;
 
 @RestController
 @EnableMethodSecurity
