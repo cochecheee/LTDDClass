@@ -42,7 +42,7 @@ public class User implements UserDetails {
 	@Column(unique = true, length = 100, nullable = false)
 	private String email;
 	
-	@Column(columnDefinition = "nvarchar(500)", nullable = false)
+	@Column(columnDefinition = "nvarchar(500)", nullable = true)
 	private String images;
 	
 	@Column(nullable = false)
