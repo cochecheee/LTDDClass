@@ -81,4 +81,8 @@ public class JwtService {
 		return extractClaim(token, Claims::getExpiration);
 	}
 	
+	public long getExpirationTime() {
+		return jwtExpiration;
+	}
+	
 }
