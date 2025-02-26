@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg1"
+    tools:context=".MainActivity">
+
+<!--  kotlin logo -->
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="252dp"
+        android:layout_height="250dp"
+        android:scaleType="center"
+        android:src="@drawable/kotlin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.417" />
+    <!-- add image button -->
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/on"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.788" />
+    <!-- add wifi switch -->
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="120dp"
+        android:layout_height="36dp"
+        android:background="@color/white"
+        android:text="Wifi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.885"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.04" />
+<!-- add checkbox -->
+    <CheckBox
+        android:id="@+id/checkBox2"
+        android:layout_width="130dp"
+        android:layout_height="42dp"
+        android:background="@color/white"
+        android:text="Background 1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.124"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.04" />
+
+<!-- radio group -->
+
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="145dp"
+        android:layout_height="93dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.112">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Background 1" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Background 2" />
+    </RadioGroup>
+    <!--    progress bar-->
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="40"
+        android:secondaryProgress="60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton1" />
+
+<!-- seek bar -->
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@android:style/Widget.DeviceDefault.Light.SeekBar"
+        android:layout_width="69dp"
+        android:layout_height="45dp"
+        android:max="100"
+        android:progress="40"
+        android:secondaryProgress="70"
+        android:thumb="@android:mipmap/sym_def_app_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.029"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.138" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

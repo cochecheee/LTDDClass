@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/main"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Top Red Block -->
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:background="#F44336"
+            android:text="1"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textColor="@android:color/white" />
+
+        <!-- Bottom Row -->
+        <LinearLayout
+            android:id="@+id/bottomRow"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+
+            <!-- Left Pink Block -->
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#F48FB1"
+                android:text="4"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:textColor="@android:color/black" />
+
+            <!-- Right Section with Nested Layout -->
+            <LinearLayout
+                android:id="@+id/rightBottomSection"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <!-- Top Purple Block -->
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:background="#9C27B0"
+                    android:text="5"
+                    android:textSize="30sp"
+                    android:gravity="center"
+                    android:textColor="@android:color/white" />
+
+                <!-- Bottom Right Split -->
+                <LinearLayout
+                    android:id="@+id/bottomRight"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <!-- Light Blue Block -->
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="#03A9F4"
+                        android:text="6"
+                        android:textSize="30sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/black" />
+
+                    <!-- Dark Blue Block -->
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="#3F51B5"
+                        android:text="7"
+                        android:textSize="30sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
