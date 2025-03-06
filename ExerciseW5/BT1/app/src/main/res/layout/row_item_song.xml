@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Mã số bài hát -->
+    <TextView
+        android:id="@+id/tv_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#19b395"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Tên bài hát -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_code"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Lời bài hát -->
+    <TextView
+        android:id="@+id/tv_lyric"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="#34495e"
+        android:textSize="14sp" />
+
+    <!-- Ca sĩ -->
+    <TextView
+        android:id="@+id/tv_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_lyric"
+        android:layout_marginTop="4dp"
+        android:textColor="#7f8c8d"
+        android:textSize="14sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>
