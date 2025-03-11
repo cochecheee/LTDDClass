@@ -51,12 +51,13 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setData() {
         List<User> userList = new ArrayList<>();
-        for (int i = 0; i < userList.size(); i++) {
+        for (int i = 0; i < 10; i++) {
             User user = new User();
-            user.setLastName("Tien"+i);
-            user.setFirstName("Bui"+i);
+            user.setLastName("Tien " + i);
+            user.setFirstName("Bui " + i);
             userList.add(user);
         }
         listUserAdapter = new ListUserAdapter(userList);
     }
+
 }
