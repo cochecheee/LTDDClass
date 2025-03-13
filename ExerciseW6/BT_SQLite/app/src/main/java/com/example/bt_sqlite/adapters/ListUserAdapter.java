@@ -1,6 +1,7 @@
 package com.example.bt_sqlite.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,8 @@ import java.util.List;
 public class ListUserAdapter extends RecyclerView.Adapter<ListUserAdapter.MyViewHolder> {
     // khai bao du lieu
     private List<User> userList;
-
+    // catching event
+    private OnItemClickListener onItemClickListener;
     public ListUserAdapter(List<User> userList) {
         this.userList = userList;
     }
@@ -27,7 +29,7 @@ public class ListUserAdapter extends RecyclerView.Adapter<ListUserAdapter.MyView
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemListUserBinding itemListUserBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext())
                 , R.layout.item_list_user, parent, false);
-        return new MyViewHolder(itemListUserBinding);
+        return new MyViewHolder(itemListUserBinding, onItemClickListener);
     }
 
     @Override
@@ -40,26 +42,44 @@ public class ListUserAdapter extends RecyclerView.Adapter<ListUserAdapter.MyView
         return userList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ObservableField<String> stt = new ObservableField<>();
         public ObservableField<String> firstName = new ObservableField<>();
         public ObservableField<String> lastName = new ObservableField<>();
-
+        private OnItemClickListener onItemClickListener;
         private ItemListUserBinding itemListUserBinding;
+        private User user;
 
-        public MyViewHolder(ItemListUserBinding itemView) {
+        public MyViewHolder(ItemListUserBinding itemView, OnItemClickListener onItemClickListener) {
             super(itemView.getRoot());
             this.itemListUserBinding = itemView;
+            this.onItemClickListener = onItemClickListener;
+
+            itemView.getRoot().setOnClickListener(this);
         }
 
         public void setBinding(User user, int position) {
             if (itemListUserBinding.getViewHolder() == null) {
                 itemListUserBinding.setViewHolder(this);
             }
+            this.user = user;
             stt.set(String.valueOf(position));
             firstName.set(user.getFirstName());
             lastName.set(user.getLastName());
 
         }
+
+        @Override
+        public void onClick(View view) {
+            this.onItemClickListener.itemClick(user);
+        }
+    }
+
+    // các phuong thức khi 1 item được click
+    public interface  OnItemClickListener{
+        void itemClick(User user);
+    }
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 }
