@@ -39,6 +39,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Category category = array.get(position);
         holder.tenSp.setText(category.getName());
+        holder.desc.setText(category.getDescription());
         // load anh
         Glide.with(context)
                 .load(category.getImages())
