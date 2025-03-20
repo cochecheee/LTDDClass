@@ -41,11 +41,9 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.retrofit)
-//    implementation(libs.converter_gson)
-//    implementation(libs.logging_interceptor)
 
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:3.12.0")
-    implementation("com.github.bumptech.glide:glide:4.14.2")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+    implementation(libs.gson)
+    implementation(libs.interceptor)
+    implementation(libs.glide)
+    annotationProcessor(libs.glideCompiler)
 }

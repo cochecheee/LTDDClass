@@ -8,8 +8,9 @@ material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
 retrofit = "2.9.0"
-#converter-gson = "2.9.0"
-#logging-interceptor = "3.12.0"
+gson = "2.9.0"
+logging-interceptor = "3.12.0"
+glide="4.14.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -22,7 +23,14 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 retrofit = {group = "com.squareup.retrofit2", name="retrofit", version.ref="retrofit"}
 #converter_gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converter-gson"}
 #logging_interceptor = {group = "com.squareup.okhttp3", name="logging-interceptor", version.ref = "logging-interceptor"}
-
+#implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+gson = {group = "com.squareup.retrofit2", name="converter-gson", version.ref="gson"}
+#implementation("com.squareup.okhttp3:logging-interceptor:3.12.0")
+interceptor= {group = "com.squareup.okhttp3", name="logging-interceptor", version.ref="logging-interceptor"}
+#implementation("com.github.bumptech.glide:glide:4.14.2")
+glide = {group="com.github.bumptech.glide",name="glide",version.ref="glide"}
+#annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+glideCompiler = {group="com.github.bumptech.glide",name="compiler",version.ref="glide"}
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 

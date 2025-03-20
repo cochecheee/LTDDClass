@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="5dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -18,50 +18,42 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="16dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <!-- Hình ảnh -->
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="Category Image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_foreground" />
 
-            <!-- Chữ và mô tả -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginTop="12dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Category Name"
+                android:textColor="#212121"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/txtTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="Category Name"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtDesc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="Category Description"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/txtDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:text="Category Description"
+                android:textColor="#757575"
+                android:textSize="14dp" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
