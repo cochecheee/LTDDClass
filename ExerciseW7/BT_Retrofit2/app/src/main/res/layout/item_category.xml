@@ -53,7 +53,8 @@
                 android:ellipsize="end"
                 android:text="Category Description"
                 android:textColor="#757575"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                tools:ignore="TextSizeCheck" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <!-- Added gravity center -->
+    <!-- tools:context=".fragments.NewOrderFragment" -->  <!-- Optional: Specify fragment context -->
+
+
+    <TextView
+        android:id="@+id/textViewLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:text="New Order Fragment"
+        android:textStyle="bold"
+        android:textSize="16dp" />
+</LinearLayout>

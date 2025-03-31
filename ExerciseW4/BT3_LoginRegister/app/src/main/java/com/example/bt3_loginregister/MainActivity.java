@@ -1,6 +1,7 @@
 package com.example.bt3_loginregister;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -23,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Xóa toàn bộ dữ liệu trong SharedPreferences mỗi khi MainActivity chạy
+//        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.clear(); // Xóa toàn bộ dữ liệu
+//        editor.apply(); // Áp dụng thay đổi
 
         ConstraintLayout startBtn = findViewById(R.id.startBtn);
         startBtn.setOnClickListener(new View.OnClickListener() {
