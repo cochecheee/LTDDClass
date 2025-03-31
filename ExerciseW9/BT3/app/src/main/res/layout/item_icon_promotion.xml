@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="75dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:gravity="center_horizontal"> <!-- Center content horizontally -->
+
+        <ImageView
+            android:id="@+id/ivImgIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_person_24"
+            android:contentDescription="Icon Image" />
+
+        <TextView
+            android:id="@+id/tvIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="icon dfdf"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:maxLines="2" />
+    <!-- TextColor set directly, better to use @color/white -->
+
+    </LinearLayout>
