@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.bt2"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -53,19 +53,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.gms:play-services-auth:20.4.1") // Có thể không cần nếu chỉ dùng DB/Storage
 
-    // --- Supabase Kotlin Client (Nên dùng ngay cả với Java) ---
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.0.0") // Cho Database
-    implementation("io.github.jan-tennert.supabase:storage-kt:1.0.0")  // Cho Storage
+    // Alternative Supabase Java implementation
+    implementation("org.postgresql:postgresql:42.5.1")
+    implementation("io.github.cdimascio:java-dotenv:5.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("org.json:json:20230227")
 
-    // --- Thư viện hỗ trợ Supabase Client ---
-    // Coroutines (Bắt buộc cho supabase-kt)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")// Hoặc phiên bản mới hơn
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // Hoặc phiên bản mới hơn
-    // Lifecycle Scope (Để chạy Coroutines an toàn trong Activity/Fragment)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0") // Hoặc phiên bản mới hơn
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    // For async operations
+    implementation("androidx.concurrent:concurrent-futures:1.1.0")
 
-    implementation("com.google.code.gson:gson:2.10.1")
 }
