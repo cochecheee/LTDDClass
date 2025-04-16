@@ -1,0 +1,53 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cập nhật ghi chú"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/editTextUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@android:drawable/edit_text"
+        android:hint="Nhập nội dung ghi chú mới..."
+        android:gravity="top|start"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:scrollbars="vertical"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingTop="12dp">
+
+        <Button
+            android:id="@+id/buttonCancelUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy"
+            android:backgroundTint="@android:color/darker_gray"/>
+
+        <Button
+            android:id="@+id/buttonConfirmUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cập nhật"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+</LinearLayout>

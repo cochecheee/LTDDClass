@@ -1,5 +1,6 @@
 package com.example.bt_sqlite;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -57,6 +58,10 @@ public class InternalStorageLoginActivity extends AppCompatActivity {
                         editor.remove("trangthai");
                         editor.commit();
                     }
+                    
+                    Intent intent = new Intent(InternalStorageLoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+
                 }else {
                     Toast.makeText(InternalStorageLoginActivity.this, "Dang nhap that bai", Toast.LENGTH_SHORT).show();
                     sharedPreferences = getSharedPreferences("dataLogin", MODE_PRIVATE);
