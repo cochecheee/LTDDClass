@@ -1,9 +1,9 @@
-package com.example.bt2;
+package com.example.bt1;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.bt2.model.Video1Model;
+import com.example.bt1.model.Video1Model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,17 +11,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.TlsVersion;
 
 public class SupabaseClient {
     private static final String TAG = "SupabaseClient";
@@ -34,21 +30,6 @@ public class SupabaseClient {
     private SupabaseClient() {
         httpClient = new OkHttpClient();
     }
-//    private SupabaseClient() {
-//        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                .tlsVersions(TlsVersion.TLS_1_2)
-//                .build();
-//        httpClient = new OkHttpClient.Builder()
-//                .connectTimeout(30, TimeUnit.SECONDS)
-//                .readTimeout(30, TimeUnit.SECONDS)
-//                .writeTimeout(30, TimeUnit.SECONDS)
-//                .connectionSpecs(Arrays.asList(
-//                        ConnectionSpec.MODERN_TLS,
-//                        ConnectionSpec.COMPATIBLE_TLS
-//                ))
-//                .build();
-//    }
-
 
     public static synchronized SupabaseClient getInstance() {
         if (instance == null) {
