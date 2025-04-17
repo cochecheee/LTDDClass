@@ -45,6 +45,7 @@ dependencies {
     implementation("io.github.cdimascio:java-dotenv:5.2.2")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("org.json:json:20230227")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:1.1.0")
 
     // For async operations
     implementation("androidx.concurrent:concurrent-futures:1.1.0")

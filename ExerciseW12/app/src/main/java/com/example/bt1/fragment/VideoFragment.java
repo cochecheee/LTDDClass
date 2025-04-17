@@ -2,11 +2,6 @@ package com.example.bt1.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.bt1.R;
 import com.example.bt1.model.Video1Model;
@@ -84,7 +83,7 @@ public class VideoFragment extends Fragment {
                     Toast.makeText(getContext(), "Video loading timeout", Toast.LENGTH_SHORT).show();
                 }
             };
-            handler.postDelayed(timeoutRunnable, 15000); // Increased to 15 seconds
+            handler.postDelayed(timeoutRunnable, 15000);
 
         } catch (Exception e) {
             progressBar.setVisibility(View.GONE);

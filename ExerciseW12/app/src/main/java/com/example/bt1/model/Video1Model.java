@@ -1,4 +1,5 @@
 package com.example.bt1.model;
+
 import java.io.Serializable;
 
 public class Video1Model implements Serializable {

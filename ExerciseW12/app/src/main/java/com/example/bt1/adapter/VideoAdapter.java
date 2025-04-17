@@ -10,7 +10,6 @@ import com.example.bt1.model.Video1Model;
 
 import java.util.List;
 
-
 public class VideoAdapter extends FragmentStateAdapter {
     private final List<Video1Model> videoList;
 
