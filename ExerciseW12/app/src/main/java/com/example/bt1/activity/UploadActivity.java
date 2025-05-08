@@ -71,9 +71,7 @@ public class UploadActivity extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                runOnUiThread(() -> {
-                    Toast.makeText(UploadActivity.this, "Upload failed: " + errorMessage, Toast.LENGTH_LONG).show();
-                });
+                runOnUiThread(() -> Toast.makeText(UploadActivity.this, "Upload failed: " + errorMessage, Toast.LENGTH_LONG).show());
             }
         });
     }

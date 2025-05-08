@@ -3,17 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/emailEditText"
@@ -21,8 +20,7 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:padding="12dp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginBottom="8dp"/>
 
     <EditText
         android:id="@+id/passwordEditText"
@@ -30,22 +28,31 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
-        android:padding="12dp"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/verificationReminderTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please verify your email if you signed up."
+        android:textColor="#FF0000"
+        android:visibility="visible"
+        android:layout_marginBottom="8dp"/>
 
     <Button
         android:id="@+id/actionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:padding="12dp"/>
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/switchModeTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Don't have an account? Sign up"
-        android:textColor="@android:color/holo_blue_dark"
-        android:layout_marginTop="16dp"/>
+        android:gravity="center"
+        android:textColor="@android:color/holo_blue_light"
+        android:layout_marginTop="8dp"/>
 
 </LinearLayout>

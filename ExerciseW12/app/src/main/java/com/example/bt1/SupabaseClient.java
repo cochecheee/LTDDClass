@@ -92,18 +92,18 @@ public class SupabaseClient {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body().string();
                 if (!response.isSuccessful()) {
-                    callback.onError("Login failed: " + response.code() + " - " + responseBody);
-                    return;
+                    // Handle non-successful response (e.g., invalid credentials)
+                    // You might want to parse the error message from responseBody
+                    callback.onError("Login failed: " + response.code() + " " + responseBody);
+                    return; // Added return here
                 }
-
                 try {
                     JSONObject jsonResponse = new JSONObject(responseBody);
+                    accessToken = jsonResponse.getString("access_token"); // Store the access token
                     String userId = jsonResponse.getJSONObject("user").getString("id");
-                    String token = jsonResponse.getString("access_token");
-                    accessToken = token; // Lưu token
-                    callback.onSuccess(userId, token);
+                    callback.onSuccess(userId, accessToken);
                 } catch (JSONException e) {
-                    callback.onError("Error parsing response: " + e.getMessage());
+                    callback.onError("Error parsing login response: " + e.getMessage());
                 }
             }
         });
@@ -115,12 +115,16 @@ public class SupabaseClient {
         try {
             json.put("email", email);
             json.put("password", password);
+            // You can add additional metadata if needed
+            // JSONObject data = new JSONObject();
+            // data.put("some_key", "some_value");
+            // json.put("data", data);
         } catch (JSONException e) {
-            callback.onError("Error creating JSON: " + e.getMessage());
+            callback.onError("Error creating JSON for signup: " + e.getMessage());
             return;
         }
 
-        RequestBody body = RequestBody.create(json.toString(), MediaType.parse("application/json"));
+        RequestBody body = RequestBody.create(json.toString(), MediaType.parse("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .url(AUTH_ENDPOINT + "/signup")
                 .post(body)
@@ -131,311 +135,232 @@ public class SupabaseClient {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onError("Sign up failed: " + e.getMessage());
+                callback.onError("Signup failed: " + e.getMessage());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body().string();
                 if (!response.isSuccessful()) {
-                    callback.onError("Sign up failed: " + response.code() + " - " + responseBody);
-                    return;
+                    // Handle non-successful response (e.g., user already exists, weak password)
+                    try {
+                        JSONObject errorJson = new JSONObject(responseBody);
+                        String errorMessage = errorJson.optString("msg", "Signup failed with code: " + response.code()); // Use "msg" field if available
+                        if (errorMessage.isEmpty() && errorJson.has("error_description")) { // Fallback for GoTrue errors
+                            errorMessage = errorJson.getString("error_description");
+                        }
+                        if (errorMessage.isEmpty()) { // Generic fallback
+                            errorMessage = "Signup failed: " + response.code() + " " + responseBody;
+                        }
+                        callback.onError(errorMessage);
+                    } catch (JSONException e) {
+                        callback.onError("Signup failed: " + response.code() + " " + responseBody); // Fallback if parsing fails
+                    }
+                    return; // Added return here
                 }
-
                 try {
                     JSONObject jsonResponse = new JSONObject(responseBody);
-                    String userId = jsonResponse.getJSONObject("user").getString("id");
-                    String token = jsonResponse.getString("access_token");
-                    accessToken = token; // Lưu token
-                    callback.onSuccess(userId, token);
+                    // For signup, Supabase usually returns the user object but not an access token immediately
+                    // unless email confirmation is disabled.
+                    // You might need the user to confirm their email before they can log in.
+                    String userId = jsonResponse.getString("id");
+
+                    // If email confirmation is disabled or you handle it differently,
+                    // you might get an access token here. Check the response structure.
+                    // accessToken = jsonResponse.optString("access_token", null); // Example
+
+                    // Assuming signup requires email confirmation, just return userId
+                    callback.onSuccess(userId, null); // Pass null for accessToken initially
+
                 } catch (JSONException e) {
-                    callback.onError("Error parsing response: " + e.getMessage());
+                    callback.onError("Error parsing signup response: " + e.getMessage());
                 }
             }
         });
     }
 
-    // Đăng xuất
-    public void signOut(AuthCallback callback) {
-        Request request = new Request.Builder()
-                .url(AUTH_ENDPOINT + "/logout")
-                .post(RequestBody.create("", MediaType.parse("application/json")))
-                .addHeader("apikey", SUPABASE_API_KEY)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .build();
 
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                callback.onError("Logout failed: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    callback.onError("Logout failed: " + response.code());
-                    return;
-                }
-                accessToken = null; // Xóa token
-                callback.onSuccess(null, null);
-            }
-        });
-    }
-
-    // Lưu lịch sử đăng nhập
-    public void insertLoginHistory(String userId, String email, AuthCallback callback) {
-        JSONObject loginJson = new JSONObject();
-        try {
-            loginJson.put("user_id", userId);
-            loginJson.put("email", email);
-        } catch (JSONException e) {
-            callback.onError("Error creating login history JSON");
+    // Lấy danh sách video (Yêu cầu xác thực)
+    public void fetchVideos(FetchCallback<List<Video1Model>> callback) {
+        if (accessToken == null) {
+            callback.onError("Not authenticated. Please sign in first.");
             return;
         }
 
         Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/login_history")
+                .url(SUPABASE_URL + "/rest/v1/videos?select=*") // Assuming your table is named 'videos'
+                .get()
                 .addHeader("apikey", SUPABASE_API_KEY)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .post(RequestBody.create(loginJson.toString(), MediaType.parse("application/json")))
+                .addHeader("Authorization", "Bearer " + accessToken) // Use the stored access token
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onError("Failed to insert login history: " + e.getMessage());
+                callback.onError("Failed to fetch videos: " + e.getMessage());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    callback.onError("Error inserting login history: " + response.code());
-                    return;
-                }
-                callback.onSuccess(userId, accessToken);
-            }
-        });
-    }
-
-    // Lấy danh sách video
-    public void fetchVideos(Context context, String userId, FetchCallback<List<Video1Model>> callback, int retryCount) {
-        if (retryCount <= 0) {
-            callback.onError("Max retries reached for fetching videos");
-            return;
-        }
-
-        String endpoint = SUPABASE_URL + "/rest/v1/videos?select=*&user_id=eq." + userId;
-
-        Request request = new Request.Builder()
-                .url(endpoint)
-                .addHeader("apikey", SUPABASE_API_KEY)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Prefer", "return=representation")
-                .build();
-
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "Failed to fetch videos (retry " + retryCount + "): " + e.getMessage(), e);
-                fetchVideos(context, userId, callback, retryCount - 1);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.d(TAG, "Response code: " + response.code());
                 String responseBody = response.body().string();
-                Log.d(TAG, "Response body: " + responseBody);
-
                 if (!response.isSuccessful()) {
-                    Log.e(TAG, "Error response: " + response.code());
-                    callback.onError("Server error: " + response.code());
+                    callback.onError("Failed to fetch videos: " + response.code() + " " + responseBody);
                     return;
                 }
-
                 try {
                     JSONArray jsonArray = new JSONArray(responseBody);
                     List<Video1Model> videos = new ArrayList<>();
-
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject videoJson = jsonArray.getJSONObject(i);
-                        Video1Model video = parseVideoJson(videoJson, context);
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        // Adapt this part based on your Video1Model structure and table columns
+                        Video1Model video = new Video1Model(
+                                jsonObject.getInt("id"), // Assuming 'id' column
+                                jsonObject.getString("title"), // Assuming 'title' column
+                                jsonObject.getString("video_url"), // Assuming 'video_url' column
+                                jsonObject.getString("created_at") // Assuming 'created_at' column
+                        );
                         videos.add(video);
                     }
-
-                    Log.d(TAG, "Parsed " + videos.size() + " videos");
                     callback.onSuccess(videos);
-
                 } catch (JSONException e) {
-                    Log.e(TAG, "JSON parsing error", e);
-                    callback.onError("Data parsing error: " + e.getMessage());
+                    callback.onError("Error parsing video list response: " + e.getMessage());
                 }
             }
         });
     }
 
-    // Tải video lên
-    public void uploadVideo(Context context, Uri videoUri, String title, String desc, String userId, UploadCallback callback) {
-        String filePath = getRealPathFromURI(context, videoUri);
-        if (filePath == null) {
-            callback.onError("Unable to get video file path");
+    // Upload video (Yêu cầu xác thực)
+    public void uploadVideo(Context context, Uri videoUri, String bucketName, UploadCallback callback) {
+        if (accessToken == null) {
+            callback.onError("Not authenticated. Please sign in first.");
             return;
         }
 
-        File videoFile = new File(filePath);
-        String fileName = System.currentTimeMillis() + "_" + videoFile.getName();
+        File videoFile = getFileFromUri(context, videoUri);
+        if (videoFile == null || !videoFile.exists()) {
+            callback.onError("Failed to get video file from Uri.");
+            return;
+        }
 
-        // Tải file lên Storage
-        RequestBody fileBody = RequestBody.create(videoFile, MediaType.parse("video/*"));
+        // Determine MIME type (adjust if necessary)
+        String mimeType = context.getContentResolver().getType(videoUri);
+        if (mimeType == null) {
+            mimeType = "video/mp4"; // Default or try to infer
+        }
+
+        // Generate a unique file name (e.g., using timestamp or UUID)
+        String fileName = "video_" + System.currentTimeMillis() + "_" + videoFile.getName();
+        // Ensure the filename doesn't contain problematic characters for URLs/paths if necessary
+
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", fileName, fileBody)
+                .addFormDataPart("file", fileName,
+                        RequestBody.create(videoFile, MediaType.parse(mimeType)))
                 .build();
 
-        Request uploadRequest = new Request.Builder()
-                .url(SUPABASE_URL + "/storage/v1/object/videos/" + fileName)
+        // Construct the upload URL for Supabase Storage
+        // The path within the bucket will be the fileName specified above.
+        String uploadUrl = SUPABASE_URL + "/storage/v1/object/" + bucketName + "/" + fileName;
+
+        Request request = new Request.Builder()
+                .url(uploadUrl)
                 .post(requestBody)
                 .addHeader("apikey", SUPABASE_API_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
-                .build();
-
-        httpClient.newCall(uploadRequest).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                callback.onError("Upload failed: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    callback.onError("Upload failed: " + response.code());
-                    return;
-                }
-
-                String videoUrl = getStorageUrl("videos", fileName);
-
-                // Lưu metadata vào bảng videos
-                JSONObject videoJson = new JSONObject();
-                try {
-                    videoJson.put("user_id", userId);
-                    videoJson.put("title", title);
-                    videoJson.put("desc", desc);
-                    videoJson.put("url", videoUrl);
-                } catch (JSONException e) {
-                    callback.onError("Error creating video JSON");
-                    return;
-                }
-
-                Request saveRequest = new Request.Builder()
-                        .url(SUPABASE_URL + "/rest/v1/videos")
-                        .addHeader("apikey", SUPABASE_API_KEY)
-                        .addHeader("Authorization", "Bearer " + accessToken)
-                        .addHeader("Content-Type", "application/json")
-                        .post(RequestBody.create(videoJson.toString(), MediaType.parse("application/json")))
-                        .build();
-
-                httpClient.newCall(saveRequest).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        callback.onError("Failed to save video metadata: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            callback.onSuccess(videoUrl);
-                        } else {
-                            callback.onError("Server error: " + response.code());
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    // Thêm thông tin người dùng vào bảng users
-    public void insertUser(String email, String userId, AuthCallback callback) {
-        JSONObject userJson = new JSONObject();
-        try {
-            userJson.put("id", userId);
-            userJson.put("email", email);
-            userJson.put("display_name", email.split("@")[0]);
-        } catch (JSONException e) {
-            callback.onError("Error creating user JSON");
-            return;
-        }
-
-        Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/users")
-                .addHeader("apikey", SUPABASE_API_KEY)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .post(RequestBody.create(userJson.toString(), MediaType.parse("application/json")))
+                // Supabase Storage might require specific headers like 'x-upsert' (set to "true" or "false")
+                // Check Supabase Storage documentation for required headers. Let's assume upsert=true for now.
+                .addHeader("x-upsert", "true")
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onError("Failed to insert user: " + e.getMessage());
+                Log.e(TAG, "Upload failed", e); // Log the full error
+                callback.onError("Video upload failed: " + e.getMessage());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                String responseBody = response.body().string();
+                Log.d(TAG, "Upload Response Code: " + response.code());
+                Log.d(TAG, "Upload Response Body: " + responseBody);
+
                 if (!response.isSuccessful()) {
-                    callback.onError("Error inserting user: " + response.code());
+                    // Try to parse Supabase error message
+                    String errorMessage = "Video upload failed: " + response.code();
+                    try {
+                        JSONObject errorJson = new JSONObject(responseBody);
+                        errorMessage += " - " + errorJson.optString("message", errorJson.optString("error", responseBody));
+                    } catch (JSONException e) {
+                        // Ignore if response is not JSON
+                        errorMessage += " " + responseBody;
+                    }
+                    Log.e(TAG, "Upload failed response: " + errorMessage);
+                    callback.onError(errorMessage);
                     return;
                 }
-                callback.onSuccess(userId, accessToken);
+
+                try {
+                    // The response body for a successful upload might be minimal, often just contains the 'Key'.
+                    // We need to construct the public URL ourselves or fetch it if needed.
+                    // Supabase usually provides a way to get the public URL.
+                    // Assuming the public URL follows a pattern:
+                    String publicUrl = SUPABASE_URL + "/storage/v1/object/public/" + bucketName + "/" + fileName;
+                    Log.d(TAG, "Upload successful. Public URL: " + publicUrl);
+                    callback.onSuccess(publicUrl); // Return the constructed public URL
+
+                } catch (Exception e) { // Catch broader exceptions just in case
+                    Log.e(TAG, "Error processing upload response", e);
+                    callback.onError("Error processing upload response: " + e.getMessage());
+                }
             }
         });
     }
 
-    // Lấy URL công khai của file trong Storage
-    public String getStorageUrl(String bucket, String path) {
-        return SUPABASE_URL + "/storage/v1/object/public/" + bucket + "/" + path;
-    }
 
-    // Phân tích JSON video
-    private Video1Model parseVideoJson(JSONObject json, Context context) {
-        Video1Model video = new Video1Model();
-
-        try {
-            video.setId(json.optString("id", ""));
-            video.setTitle(json.optString("title", "No Title"));
-            video.setDesc(json.optString("desc", "No Description"));
-            video.setCreated_at(json.optString("created_at", ""));
-            String videoUrl = json.optString("url", "");
-            video.setUrl(videoUrl);
-
-            Log.d(TAG, "Parsed video: " + video.getTitle() + ", URL: " + video.getUrl());
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error parsing video JSON", e);
+    // Helper method to get File from Uri (May need adjustments based on how Uri is obtained)
+    private File getFileFromUri(Context context, Uri uri) {
+        String filePath = null;
+        // Try to get path for different Uri schemes
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { MediaStore.Video.Media.DATA }; // Or MediaStore.Images.Media.DATA / Files.FileColumns.DATA depending on source
+            Cursor cursor = null;
+            try {
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA); // Adjust column name if needed
+                    filePath = cursor.getString(columnIndex);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting file path from content URI", e);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            filePath = uri.getPath();
         }
 
-        return video;
+        if (filePath != null) {
+            return new File(filePath);
+        } else {
+            Log.e(TAG, "Could not get file path from URI: " + uri.toString());
+            // Fallback or error handling needed if path is still null
+            // Maybe try copying the file to app's cache directory if direct path access fails
+            return null;
+        }
     }
 
-    // Lấy đường dẫn thực từ Uri
-    private String getRealPathFromURI(Context context, Uri contentUri) {
-        String[] proj = {MediaStore.Video.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor == null) return null;
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
-    }
+    // Add methods for other operations like fetching user profile, updating data, etc. as needed
+    // Remember to add the Authorization header with the Bearer token for authenticated requests.
 
-    // Getter và Setter cho accessToken
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String token) {
-        this.accessToken = token;
+    // Method to potentially clear the access token on sign out
+    public void signOut() {
+        this.accessToken = null;
+        // Optionally call Supabase auth endpoint for signout if available/needed
+        // e.g., POST to /auth/v1/logout
+        // Note: Supabase handles token expiry, but explicit server-side logout might be desired.
+        Log.d(TAG, "User signed out, access token cleared.");
     }
 }

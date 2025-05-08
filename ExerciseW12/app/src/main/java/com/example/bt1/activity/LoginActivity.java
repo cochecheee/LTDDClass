@@ -1,5 +1,6 @@
 package com.example.bt1.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,21 +19,20 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button actionButton;
-    private TextView switchModeTextView, titleTextView;
+    private TextView switchModeTextView, titleTextView, verificationReminderTextView;
     private boolean isLoginMode = true;
     private SupabaseClient supabaseClient;
     private SharedPreferences prefs;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Initialize SharedPreferences để lưu token và userId
         prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
         supabaseClient = SupabaseClient.getInstance();
 
-        // Check if user is already logged in
         String savedToken = prefs.getString("access_token", null);
         if (savedToken != null) {
             supabaseClient.setAccessToken(savedToken);
@@ -40,14 +40,18 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize views
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         actionButton = findViewById(R.id.actionButton);
         switchModeTextView = findViewById(R.id.switchModeTextView);
         titleTextView = findViewById(R.id.titleTextView);
+        verificationReminderTextView = findViewById(R.id.verificationReminderTextView);
 
-        // Set click listeners
+        // Initialize ProgressDialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Processing...");
+        progressDialog.setCancelable(false);
+
         actionButton.setOnClickListener(v -> handleAuthAction());
         switchModeTextView.setOnClickListener(v -> switchMode());
     }
@@ -58,10 +62,12 @@ public class LoginActivity extends AppCompatActivity {
             titleTextView.setText("Login");
             actionButton.setText("Login");
             switchModeTextView.setText("Don't have an account? Sign up");
+            verificationReminderTextView.setVisibility(TextView.VISIBLE);
         } else {
             titleTextView.setText("Sign Up");
             actionButton.setText("Sign Up");
             switchModeTextView.setText("Already have an account? Login");
+            verificationReminderTextView.setVisibility(TextView.GONE);
         }
     }
 
@@ -69,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        // Kiểm tra đầu vào
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Email and password are required", Toast.LENGTH_SHORT).show();
             return;
@@ -85,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        progressDialog.show();
         if (isLoginMode) {
             login(email, password);
         } else {
@@ -93,19 +99,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password) {
+        Log.d("LoginActivity", "Attempting login with email: " + email);
         supabaseClient.signIn(email, password, new SupabaseClient.AuthCallback() {
             @Override
             public void onSuccess(String userId, String accessToken) {
-                // Lưu lịch sử đăng nhập
                 supabaseClient.insertLoginHistory(userId, email, new SupabaseClient.AuthCallback() {
                     @Override
                     public void onSuccess(String userId, String accessToken) {
                         runOnUiThread(() -> {
-                            // Lưu token và userId vào SharedPreferences
                             prefs.edit()
                                     .putString("access_token", accessToken)
                                     .putString("user_id", userId)
                                     .apply();
+                            progressDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                             navigateToMainActivity();
                         });
@@ -115,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onError(String errorMessage) {
                         runOnUiThread(() -> {
                             Log.e("LoginActivity", "Failed to save login history: " + errorMessage);
+                            progressDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Failed to save login history: " + errorMessage, Toast.LENGTH_LONG).show();
                         });
                     }
@@ -128,9 +135,14 @@ public class LoginActivity extends AppCompatActivity {
                     String userFriendlyMessage = errorMessage;
                     if (errorMessage.contains("Invalid login credentials")) {
                         userFriendlyMessage = "Incorrect email or password";
+                    } else if (errorMessage.contains("email_not_confirmed")) {
+                        userFriendlyMessage = "Please verify your email before logging in.";
                     } else if (errorMessage.contains("network")) {
                         userFriendlyMessage = "Network error. Please check your connection.";
+                    } else if (errorMessage.contains("parsing")) {
+                        userFriendlyMessage = "Unexpected server response. Please try again.";
                     }
+                    progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Login failed: " + userFriendlyMessage, Toast.LENGTH_LONG).show();
                 });
             }
@@ -138,29 +150,42 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signUp(String email, String password) {
+        Log.d("LoginActivity", "Attempting signup with email: " + email);
         supabaseClient.signUp(email, password, new SupabaseClient.AuthCallback() {
             @Override
             public void onSuccess(String userId, String accessToken) {
-                // Thêm thông tin người dùng vào bảng users
-                supabaseClient.insertUser(email, userId, new SupabaseClient.AuthCallback() {
-                    @Override
-                    public void onSuccess(String userId, String accessToken) {
-                        runOnUiThread(() -> {
-                            // Lưu token và userId
-                            prefs.edit()
-                                    .putString("access_token", accessToken)
-                                    .putString("user_id", userId)
-                                    .apply();
-                            Toast.makeText(LoginActivity.this, "Sign up successful. Please verify your email.", Toast.LENGTH_LONG).show();
-                            navigateToMainActivity();
-                        });
-                    }
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Log.d("LoginActivity", "Signup success: userId=" + userId + ", accessToken=" + (accessToken != null ? "present" : "null"));
+                    if (accessToken == null) {
+                        Toast.makeText(LoginActivity.this, "Sign up successful. Please verify your email.", Toast.LENGTH_LONG).show();
+                        emailEditText.setText("");
+                        passwordEditText.setText("");
+                        if (!isLoginMode) {
+                            switchMode();
+                        }
+                    } else {
+                        supabaseClient.insertUser(email, userId, new SupabaseClient.AuthCallback() {
+                            @Override
+                            public void onSuccess(String userId, String accessToken) {
+                                runOnUiThread(() -> {
+                                    prefs.edit()
+                                            .putString("access_token", accessToken)
+                                            .putString("user_id", userId)
+                                            .apply();
+                                    Toast.makeText(LoginActivity.this, "Sign up successful", Toast.LENGTH_SHORT).show();
+                                    navigateToMainActivity();
+                                    Log.d("LoginActivity", "User insert successful for userId: " + userId);
+                                });
+                            }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        runOnUiThread(() -> {
-                            Log.e("LoginActivity", "Failed to save user info: " + errorMessage);
-                            Toast.makeText(LoginActivity.this, "Failed to save user info: " + errorMessage, Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onError(String errorMessage) {
+                                runOnUiThread(() -> {
+                                    Log.e("LoginActivity", "Failed to save user info: " + errorMessage);
+                                    Toast.makeText(LoginActivity.this, "Failed to save user info: " + errorMessage, Toast.LENGTH_LONG).show();
+                                });
+                            }
                         });
                     }
                 });
@@ -171,13 +196,18 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Log.e("LoginActivity", "Sign up error: " + errorMessage);
                     String userFriendlyMessage = errorMessage;
-                    if (errorMessage.contains("User already registered")) {
+                    if (errorMessage.contains("already registered")) {
                         userFriendlyMessage = "This email is already registered. Please use another email.";
-                    } else if (errorMessage.contains("Password")) {
+                    } else if (errorMessage.contains("Password too weak")) {
                         userFriendlyMessage = "Password is too weak. Please use a stronger password.";
                     } else if (errorMessage.contains("network")) {
                         userFriendlyMessage = "Network error. Please check your connection.";
+                    } else if (errorMessage.contains("email_address_invalid")) {
+                        userFriendlyMessage = "Invalid email address. Please use a valid email.";
+                    } else if (errorMessage.contains("parsing")) {
+                        userFriendlyMessage = "Unexpected server response. Please try again later.";
                     }
+                    progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Sign up failed: " + userFriendlyMessage, Toast.LENGTH_LONG).show();
                 });
             }

@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat; // Use ContextCompat for checkSelfPe
 
 import com.bumptech.glide.Glide; // Make sure Glide is imported
 import com.example.bt1.R;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageViewChoose, imageViewUpload;
     EditText editTextUserName;
     TextView textViewUsername;
+    MaterialToolbar toolbarMain; // For the toolbar
 
     // --- Member Variables --- (from Slide 11)
     private Uri mUri;
@@ -107,6 +109,26 @@ public class MainActivity extends AppCompatActivity {
         // Initialize Views
         AnhXa(); // (from Slide 12)
 
+        // --- Toolbar Setup ---
+        setSupportActionBar(toolbarMain); // Set the toolbar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show back arrow
+            getSupportActionBar().setDisplayShowHomeEnabled(true); // Show back arrow
+            // Optional: Set title if not set in XML or if you want to change it dynamically
+            // getSupportActionBar().setTitle("Image Upload");
+        }
+        // Handle back arrow click
+        toolbarMain.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // This will simulate the system back button press
+                getOnBackPressedDispatcher().onBackPressed();
+                // Or you can use finish(); if you always want to close this activity
+                // finish();
+            }
+        });
+        // --- End Toolbar Setup ---
+
         // Initialize ProgressDialog
         mProgressDialog = new ProgressDialog(this); // (from Slide 12) - Use 'this' for context
         mProgressDialog.setMessage("Please wait upload....");
@@ -135,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
 
     // --- View Initialization --- (from Slide 11)
     private void AnhXa() {
+        toolbarMain = findViewById(R.id.toolbar_main); // Initialize the toolbar
         btnChoose = findViewById(R.id.btnChoose);
         btnUpload = findViewById(R.id.btnUpload);
         imageViewUpload = findViewById(R.id.imgMultipart); // Shows uploaded image
         imageViewChoose = findViewById(R.id.imgChoose);     // Shows chosen image preview
-        editTextUserName = findViewById(R.id.editUserName);
-        textViewUsername = findViewById(R.id.tvUsername);   // Displays username from response
+
     }
 
     // --- Permission Helper --- (from Slide 8)
@@ -217,11 +239,9 @@ public class MainActivity extends AppCompatActivity {
         // Get username
         String username = editTextUserName.getText().toString().trim();
         if (username.isEmpty()) {
-            // Optional: handle empty username if required by API
+
             username = "default_user"; // Or show an error
-            // Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show();
-            // mProgressDialog.dismiss();
-            // return;
+
         }
         RequestBody requestUsername = RequestBody.create(MediaType.parse("multipart/form-data"), username);
 

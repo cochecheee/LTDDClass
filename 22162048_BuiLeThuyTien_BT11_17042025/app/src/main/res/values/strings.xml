@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">BT104</string>
+    <string name="media_thumbnail">Media Thumbnail</string>
+    <string name="upload_video">Upload Video</string>
+    <string name="register_here">Register here</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="login_here">Login here</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email">Email</string>
+    <string name="create_account">Create Account</string>
+    <string name="select_video">Select a video</string>
+    <string name="choose_from_gallery">Choose from gallery</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="upload">Upload</string>
+    <string name="full_name">Fullname</string>
+    <string name="already_have_account">Already have an account ? Login here\n</string>
+</resources>

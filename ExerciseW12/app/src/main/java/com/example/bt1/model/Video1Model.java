@@ -11,8 +11,10 @@ public class Video1Model implements Serializable {
     private String url;
     private String created_at;
     private String video_path;
+    private String userEmail;
+    private String userProfilePicture;
 
-    public Video1Model() {}
+    public Video1Model(int id, String title, String videoUrl, String createdAt) {}
 
     public Video1Model(String id, String title, String desc, String url, String created_at) {
         this.id = id;
@@ -68,5 +70,21 @@ public class Video1Model implements Serializable {
 
     public void setVideo_path(String video_path) {
         this.video_path = video_path;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserProfilePicture() {
+        return userProfilePicture;
+    }
+
+    public void setUserProfilePicture(String userProfilePicture) {
+        this.userProfilePicture = userProfilePicture;
     }
 }

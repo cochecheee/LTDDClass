@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tvRegisterTitle" type="id" />
+    <item name="tilFullName" type="id" />
+    <item name="etFullName" type="id" />
+    <item name="tilEmail" type="id" />
+    <item name="etEmail" type="id" />
+    <item name="btnRegister" type="id" />
+    <item name="tvLoginLink" type="id" />
+</resources>

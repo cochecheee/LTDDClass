@@ -47,6 +47,9 @@ dependencies {
     implementation("org.json:json:20230227")
     implementation("io.github.jan-tennert.supabase:gotrue-kt:1.1.0")
 
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
     // For async operations
     implementation("androidx.concurrent:concurrent-futures:1.1.0")
 }

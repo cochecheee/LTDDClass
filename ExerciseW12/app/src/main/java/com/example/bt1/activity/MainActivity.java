@@ -5,15 +5,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.example.bt1.R;
 import com.example.bt1.SupabaseClient;
 import com.example.bt1.adapter.VideoAdapter;
 import com.example.bt1.model.Video1Model;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<Video1Model> videoList = new ArrayList<>();
     private ViewPager2 viewPager;
     private SharedPreferences prefs;
+    private ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +38,46 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.vpager);
         Button uploadButton = findViewById(R.id.uploadButton);
+        Button profileButton = findViewById(R.id.profileButton);
+        profileImageView = findViewById(R.id.profileImageView);
 
         uploadButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, UploadActivity.class);
             startActivity(intent);
         });
 
+        profileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        });
 
+        loadUserProfile();
         loadVideosFromSupabase();
+    }
+
+    private void loadUserProfile() {
+        String userId = prefs.getString("user_id", null);
+        if (userId == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SupabaseClient.getInstance().fetchUserProfile(userId, new SupabaseClient.FetchCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject userProfile) {
+                String profilePictureUrl = userProfile.optString("profile_picture", "");
+                runOnUiThread(() -> {
+                    if (!profilePictureUrl.isEmpty()) {
+                        Glide.with(MainActivity.this).load(profilePictureUrl).into(profileImageView);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Failed to load profile: " + errorMessage, Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
     private void logout() {
@@ -48,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String userId, String accessToken) {
                 runOnUiThread(() -> {
-                    // Xóa token
                     prefs.edit().remove("access_token").apply();
                     Toast.makeText(MainActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -59,9 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Logout failed: " + errorMessage, Toast.LENGTH_LONG).show();
-                });
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Logout failed: " + errorMessage, Toast.LENGTH_LONG).show());
             }
         });
     }
@@ -92,9 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(String errorMessage) {
                 Log.e(TAG, "Error fetching videos: " + errorMessage);
-                runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Failed to load videos: " + errorMessage, Toast.LENGTH_LONG).show();
-                });
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Failed to load videos: " + errorMessage, Toast.LENGTH_LONG).show());
             }
         }, 3);
     }
